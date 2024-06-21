@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Experience Calculation Form</title>
+</head>
+<body>
+    <h2>Previous experiences relevant for the post (1 step for each 3 years)</h2>
+    <form id="experienceForm">
+        <div id="experienceInputs">
+            <div class="experienceEntry">
+                <label for="startDate1">Start date:</label>
+                <input type="date" id="startDate1" name="startDate1">
+                
+                <label for="endDate1">End date:</label>
+                <input type="date" id="endDate1" name="endDate1">
+                
+                <label for="fte1">Full-time equivalent:</label>
+                <input type="text" id="fte1" name="fte1" value="100%" readonly>
+                
+                <label for="relevancy1">Relevancy of experience:</label>
+                <input type="text" id="relevancy1" name="relevancy1" value="100%" readonly>
+                
+                <label for="title1">Post (Title, Employer):</label>
+                <input type="text" id="title1" name="title1">
+            </div>
+        </div>
+        <button type="button" onclick="addExperienceEntry()">Add another experience</button>
+        <button type="button" onclick="calculateExperience()">Calculate Experience</button>
+    </form>
+
+    <h3>Total Experience:</h3>
+    <p id="totalExperience"></p>
+
+    <script>
+        let experienceCount = 1;
+
+        function addExperienceEntry() {
+            experienceCount++;
+            const experienceDiv = document.createElement('div');
+            experienceDiv.className = 'experienceEntry';
+            experienceDiv.innerHTML = `
+                <label for="startDate${experienceCount}">Start date:</label>
+                <input type="date" id="startDate${experienceCount}" name="startDate${experienceCount}">
+                
+                <label for="endDate${experienceCount}">End date:</label>
+                <input type="date" id="endDate${experienceCount}" name="endDate${experienceCount}">
+                
+                <label for="fte${experienceCount}">Full-time equivalent:</label>
+                <input type="text" id="fte${experienceCount}" name="fte${experienceCount}" value="100%" readonly>
+                
+                <label for="relevancy${experienceCount}">Relevancy of experience:</label>
+                <input type="text" id="relevancy${experienceCount}" name="relevancy${experienceCount}" value="100%" readonly>
+                
+                <label for="title${experienceCount}">Post (Title, Employer):</label>
+                <input type="text" id="title${experienceCount}" name="title${experienceCount}">
+            `;
+            document.getElementById('experienceInputs').appendChild(experienceDiv);
+        }
+
+        function calculateExperience() {
+            let totalMonths = 0;
+
+            for (let i = 1; i <= experienceCount; i++) {
+                const startDate = new Date(document.getElementById(`startDate${i}`).value);
+                const endDate = new Date(document.getElementById(`endDate${i}`).value);
+
+                if (startDate && endDate && endDate > startDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30.44); // Approximate average days per month
+                    totalMonths += diffMonths;
+                }
+            }
+
+            const totalYears = Math.floor(totalMonths / 12);
+            const remainingMonths = (totalMonths % 12).toFixed(2);
+            const steps = Math.floor(totalYears / 3);
+
+            document.getElementById('totalExperience').innerText = `${totalYears} years and ${remainingMonths} months (${steps} steps)`;
+        }
+    </script>
+</body>
+</html>
